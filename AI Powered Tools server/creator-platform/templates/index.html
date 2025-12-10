@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="jumbotron bg-dark p-5 rounded-3 border border-primary">
+                <h1 class="display-4">🎬 Welcome to Creator's Playground</h1>
+                <p class="lead">Your all-in-one AI-powered creative suite for visual novel creators and content creators.</p>
+                <hr class="my-4">
+                <p>Access professional tools without the complexity. Everything you need in one place.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Video Editor Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 bg-secondary border-primary">
+                <div class="card-body">
+                    <h3 class="card-title"><i class="bi bi-film"></i> FastTrack Video Editor</h3>
+                    <p class="card-text">Professional browser-based video editing with AI-assisted scene detection, timeline editing, and format support.</p>
+                    <ul class="list-group list-group-flush bg-transparent">
+                        <li class="list-group-item bg-transparent">🎬 Drag & Drop Timeline Editor</li>
+                        <li class="list-group-item bg-transparent">🤖 AI Scene Detection</li>
+                        <li class="list-group-item bg-transparent">⚡ Real-time Preview</li>
+                        <li class="list-group-item bg-transparent">📁 Multiple Format Support</li>
+                    </ul>
+                </div>
+                <div class="card-footer bg-dark">
+                    <a href="/video-editor" class="btn btn-primary w-100">Launch Editor</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Creator's Tool Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 bg-secondary border-success">
+                <div class="card-body">
+                    <h3 class="card-title"><i class="bi bi-pencil"></i> Creator's Tool</h3>
+                    <p class="card-text">Complete visual novel creation suite with character design, scene writing, project management, and AI assistance.</p>
+                    <ul class="list-group list-group-flush bg-transparent">
+                        <li class="list-group-item bg-transparent">👥 Character Designer</li>
+                        <li class="list-group-item bg-transparent">📝 Scene Writer</li>
+                        <li class="list-group-item bg-transparent">🤖 AI Story Generation</li>
+                        <li class="list-group-item bg-transparent">📊 Project Dashboard</li>
+                    </ul>
+                </div>
+                <div class="card-footer bg-dark">
+                    <a href="/creator-tool" class="btn btn-success w-100">Start Creating</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Code Assistant Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 bg-secondary border-warning">
+                <div class="card-body">
+                    <h3 class="card-title"><i class="bi bi-code-slash"></i> Code Assistant</h3>
+                    <p class="card-text">AI-powered coding assistant for Ren'Py and Python development. Get real-time help, debugging, and optimization.</p>
+                    <ul class="list-group list-group-flush bg-transparent">
+                        <li class="list-group-item bg-transparent">🐍 Python & Ren'Py Support</li>
+                        <li class="list-group-item bg-transparent">🤖 AI Code Completion</li>
+                        <li class="list-group-item bg-transparent">🔍 Debugging Assistance</li>
+                        <li class="list-group-item bg-transparent">📚 Code Examples</li>
+                    </ul>
+                </div>
+                <div class="card-footer bg-dark">
+                    <a href="/code-assistant" class="btn btn-warning w-100">Code Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card bg-dark">
+                <div class="card-body">
+                    <h4><i class="bi bi-graph-up"></i> Platform Features</h4>
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <div class="display-6">🎨</div>
+                            <h5>AI-Powered</h5>
+                            <p>DeepSeek & LLaVA Integration</p>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="display-6">⚡</div>
+                            <h5>Local Processing</h5>
+                            <p>Zero API Costs, Full Privacy</p>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="display-6">💾</div>
+                            <h5>Smart Caching</h5>
+                            <p>Efficient Resource Management</p>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="display-6">🔒</div>
+                            <h5>Creator-First</h5>
+                            <p>No Censorship, Full Control</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+venv/
+env/
+.venv/
+pip-log.txt
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+
+# Flask
+instance/
+.webassets-cache
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# Redis (if used locally)
+dump.rdb
+
+# Environment and secrets – CRITICAL: NEVER COMMIT
+.env
+*.env
+.env.local
+secrets.yaml
+config.local.*
+credentials.json
+firebase-key.json
+
+# Jupyter & IDE
+.ipynb_checkpoints/
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Media/ML Large Files (handle via Git LFS or external storage)
+*.pkl
+*.h5
+*.model
+*.weights
+large_dataset/
+renders/
+
+# Temp files
+*.log
+*.tmp
+*.temp

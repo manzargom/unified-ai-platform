@@ -1,0 +1,516 @@
+{% extends "base.html" %}
+
+{% block title %}FastTrack Editor{% endblock %}
+
+{% block extra_css %}
+<style>
+    .compact-video-container {
+        position: relative;
+        width: 100%;
+        background: #000;
+        border-radius: 8px;
+        overflow: hidden;
+        height: 320px;
+    }
+
+    .drop-zone {
+        border: 2px dashed #0d6efd;
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+        background: rgba(13, 110, 253, 0.05);
+        transition: all 0.3s;
+        min-height: 120px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .drop-zone.drag-over {
+        background: rgba(13, 110, 253, 0.2);
+        border-color: #0dcaf0;
+    }
+
+    .timeline-area {
+        background: #2c2c2c;
+        border-radius: 8px;
+        padding: 15px;
+        margin-top: 15px;
+    }
+
+    .timeline-track {
+        height: 60px;
+        background: #1a1d20;
+        border-radius: 5px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+        padding: 8px;
+        position: relative;
+    }
+
+    .clip-item {
+        display: inline-block;
+        height: 44px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 3px;
+        margin-right: 4px;
+        cursor: grab;
+        position: relative;
+        min-width: 60px;
+        transition: transform 0.2s;
+        user-select: none;
+    }
+
+    .clip-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+
+    .clip-info {
+        position: absolute;
+        bottom: 2px;
+        left: 4px;
+        font-size: 9px;
+        color: white;
+        pointer-events: none;
+    }
+
+    .clip-duration {
+        position: absolute;
+        top: 2px;
+        right: 4px;
+        font-size: 8px;
+        color: rgba(255,255,255,0.8);
+        pointer-events: none;
+    }
+
+    /* Compact Dual Range Slider */
+    .compact-slider-container {
+        position: relative;
+        height: 60px;
+        margin: 15px 0;
+    }
+
+    .compact-track {
+        position: relative;
+        width: 100%;
+        height: 6px;
+        background: #495057;
+        border-radius: 3px;
+        margin-top: 15px;
+    }
+
+    .compact-selected-range {
+        position: absolute;
+        height: 6px;
+        background: rgba(13, 110, 253, 0.5);
+        border-radius: 3px;
+        top: 0;
+    }
+
+    .compact-thumb {
+        position: absolute;
+        top: -7px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 2px solid white;
+        cursor: pointer;
+        transform: translateX(-50%);
+        z-index: 10;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+
+    .compact-thumb.start-thumb {
+        background: #28a745;
+    }
+
+    .compact-thumb.end-thumb {
+        background: #dc3545;
+    }
+
+    .compact-thumb:hover {
+        transform: translateX(-50%) scale(1.05);
+    }
+
+    .compact-time-labels {
+        display: flex;
+        justify-content: space-between;
+        font-size: 11px;
+        color: #adb5bd;
+        margin-top: 5px;
+    }
+
+    .compact-duration-label {
+        font-weight: 500;
+        color: #0d6efd;
+        font-size: 11px;
+    }
+
+    /* Compact Video List */
+    .compact-video-list {
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    .compact-video-item {
+        cursor: pointer;
+        transition: all 0.2s;
+        padding: 6px 8px;
+        border-radius: 4px;
+        margin-bottom: 3px;
+        font-size: 12px;
+    }
+
+    .compact-video-item:hover {
+        background: #495057 !important;
+    }
+
+    .compact-video-item.active {
+        background: #495057 !important;
+        border-left: 3px solid #28a745;
+        padding-left: 5px;
+    }
+
+    .compact-filename {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+    }
+
+    /* Timeline Controls */
+    .timeline-controls {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+        flex-wrap: wrap;
+    }
+
+    .timeline-controls .btn {
+        font-size: 12px;
+        padding: 4px 8px;
+    }
+
+    /* Upload Progress */
+    #upload-progress {
+        transition: all 0.3s;
+        margin-top: 10px;
+    }
+
+    .progress-bar {
+        transition: width 0.3s ease;
+        font-size: 11px;
+    }
+
+    /* Active Navigation */
+    .active-nav {
+        color: #0dcaf0 !important;
+        border-bottom: 2px solid #0dcaf0;
+    }
+
+    .compact-card {
+        margin-bottom: 15px;
+        border-radius: 8px;
+    }
+
+    .compact-card-header {
+        padding: 10px 15px;
+        border-radius: 8px 8px 0 0 !important;
+        font-size: 14px;
+    }
+
+    .compact-card-body {
+        padding: 12px;
+    }
+
+    .compact-preview-clip {
+        background: rgba(13, 110, 253, 0.1);
+        border: 1px solid #0d6efd;
+        padding: 10px;
+        border-radius: 6px;
+        margin: 10px 0;
+        font-size: 13px;
+    }
+
+    .key-hint {
+        font-size: 11px;
+        color: #6c757d;
+        margin-top: 3px;
+    }
+
+    /* Editing Tools Tabs */
+    .editing-tabs {
+        display: flex;
+        gap: 5px;
+        margin-bottom: 10px;
+        flex-wrap: wrap;
+    }
+
+    .tab-btn {
+        padding: 4px 8px;
+        font-size: 11px;
+        border-radius: 4px;
+        background: #495057;
+        border: 1px solid #6c757d;
+        color: #adb5bd;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .tab-btn:hover {
+        background: #6c757d;
+        color: white;
+    }
+
+    .tab-btn.active {
+        background: #0d6efd;
+        border-color: #0d6efd;
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-2">
+    <!-- Header -->
+    <div class="row mb-2">
+        <div class="col-12">
+            <p class="text-muted mb-0">Professional browser-based video editor</p>
+        </div>
+    </div>
+
+    <!-- Main Editor Area - No scrolling needed -->
+    <div class="row g-2">
+        <!-- Left Panel: Upload & Video List (20%) -->
+        <div class="col-md-2">
+            <!-- Upload Area -->
+            <div class="card compact-card bg-dark">
+                <div class="card-header compact-card-header bg-primary">
+                    <h6 class="mb-0"><i class="bi bi-upload"></i> Upload</h6>
+                </div>
+                <div class="card-body compact-card-body">
+                    <div id="drop-zone" class="drop-zone">
+                        <i class="bi bi-cloud-arrow-up mb-2"></i>
+                        <p class="mb-1 small">Drop files here</p>
+                        <input type="file" id="file-input" accept="video/*" multiple hidden>
+                        <button class="btn btn-outline-light btn-sm" onclick="document.getElementById('file-input').click()">
+                        <input type="file" id="file-input" accept="video/*,image/*" multiple hidden>
+<button class="btn btn-outline-light btn-sm" onclick="document.getElementById('file-input').click()">
+    Browse (Videos & Images)
+</button>
+                            Browse
+                        </button>
+                    </div>
+                    
+                    <!-- Upload Progress -->
+                    <div id="upload-progress" style="display: none;">
+                        <div class="progress mb-1" style="height: 16px;">
+                            <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated" 
+                                 role="progressbar" style="width: 0%"></div>
+                        </div>
+                        <div class="small text-center" id="progress-text">Uploading...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Video List -->
+            <div class="card compact-card bg-dark">
+                <div class="card-header compact-card-header bg-success">
+                    <h6 class="mb-0"><i class="bi bi-list"></i> Videos</h6>
+                </div>
+                <div class="card-body compact-card-body p-2">
+                    <div id="videos-list" class="compact-video-list">
+                        <p class="text-muted small text-center mb-0">No videos</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Center Panel: Video Player & Timeline (60%) -->
+        <div class="col-md-7">
+            <!-- Video Player -->
+            <div class="card compact-card bg-dark">
+                <div class="card-header compact-card-header">
+                    <h6 class="mb-0"><i class="bi bi-play-circle"></i> Player</h6>
+                </div>
+                <div class="card-body compact-card-body p-0">
+                    <div class="compact-video-container">
+                        <video id="main-video" controls class="w-100 h-100">
+                            <source src="" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+
+                    <!-- Clip Selection -->
+                    <div class="p-3">
+                        <div class="compact-slider-container">
+                            <div class="compact-track" id="slider-track">
+                                <div class="compact-selected-range" id="selected-range"></div>
+                                <div class="compact-thumb start-thumb" id="start-thumb" data-type="start"></div>
+                                <div class="compact-thumb end-thumb" id="end-thumb" data-type="end"></div>
+                            </div>
+                            
+                            <div class="compact-time-labels">
+                                <span class="start-label" id="start-label">00:00</span>
+                                <span class="compact-duration-label" id="duration-label">00:00</span>
+                                <span class="end-label" id="end-label">00:00</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Clip Controls -->
+                        <div class="compact-preview-clip">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="small"><strong>Selection:</strong> <span id="clip-duration">00:00</span></div>
+                                    <div class="key-hint">A/D or ←/→ to adjust both sliders</div>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button id="play-selection" class="btn btn-outline-info btn-sm">
+                                        <i class="bi bi-play-fill"></i> Play
+                                    </button>
+                                    <button id="add-clip" class="btn btn-success btn-sm">
+                                        <i class="bi bi-plus"></i> Add
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline Area -->
+            <div class="timeline-area">
+                <!-- Editing Tools Tabs -->
+                <div class="editing-tabs">
+                    <div class="tab-btn active">Timeline</div>
+                    <div class="tab-btn">Cut</div>
+                    <div class="tab-btn">Crop</div>
+                    <div class="tab-btn">Color</div>
+                    <div class="tab-btn">Audio</div>
+                    <div class="tab-btn">Text</div>
+                </div>
+                
+                <!-- Timeline Track -->
+                <div id="video-track" class="timeline-track">
+                    <!-- Clips will appear here -->
+                </div>
+                
+                <!-- Timeline Controls -->
+                <div class="timeline-controls">
+                    <button id="play-timeline" class="btn btn-outline-info btn-sm">
+                        <i class="bi bi-play-fill"></i> Play All
+                    </button>
+                    <button id="clear-timeline" class="btn btn-outline-danger btn-sm">
+                        <i class="bi bi-trash"></i> Clear
+                    </button>
+                    <button id="export-timeline" class="btn btn-primary btn-sm">
+                        <i class="bi bi-download"></i> Export
+                    </button>
+                    <div class="ms-auto">
+                        <span class="text-muted small">
+                            Clips: <span id="clip-count">0</span> | 
+                            Duration: <span id="total-duration">00:00</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Video Info (20%) -->
+        <div class="col-md-3">
+            <!-- Current Video Info -->
+            <div class="card compact-card bg-dark">
+                <div class="card-header compact-card-header bg-info">
+                    <h6 class="mb-0"><i class="bi bi-info-circle"></i> Video Info</h6>
+                </div>
+                <div class="card-body compact-card-body">
+                    <div id="video-info">
+                        <p class="text-muted mb-0 small">No video loaded</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Selection Info -->
+            <div class="card compact-card bg-dark">
+                <div class="card-header compact-card-header bg-warning">
+                    <h6 class="mb-0"><i class="bi bi-gear"></i> Settings</h6>
+                </div>
+                <div class="card-body compact-card-body">
+                    <div class="mb-2">
+                        <div class="small text-muted">Keyboard Controls:</div>
+                        <div class="key-hint">• A/←: Move both sliders left</div>
+                        <div class="key-hint">• D/→: Move both sliders right</div>
+                        <div class="key-hint">• Space: Play/Pause</div>
+                        <div class="key-hint">• Shift + A/D: Fine adjust</div>
+                    </div>
+                    <div class="mt-3">
+                        <div class="small text-muted">Export Format:</div>
+                        <select class="form-select form-select-sm bg-dark">
+                            <option>MP4 (Recommended)</option>
+                            <option>WebM</option>
+                            <option>MOV</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Session Info -->
+            <div class="card compact-card bg-dark">
+                <div class="card-header compact-card-header bg-secondary">
+                    <h6 class="mb-0"><i class="bi bi-clock"></i> Session</h6>
+                </div>
+                <div class="card-body compact-card-body">
+                    <div class="small">
+                        <div class="mb-1">Session ID: <span id="session-id" class="text-success">New</span></div>
+                        <div class="mb-1">Status: <span id="timeline-status" class="text-success">Ready</span></div>
+                        <div>Auto-save: <span class="text-success">Enabled</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="row mt-2">
+        <div class="col-12">
+            <div class="card bg-dark">
+                <div class="card-body py-1">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span id="status-message" class="small">
+                            <i class="bi bi-info-circle"></i> Ready
+                        </span>
+                        <span class="small text-muted">
+                            FastTrack Editor v1.0
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/video-editor.js') }}"></script>
+<script>
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(tab => {
+        tab.addEventListener('click', function() {
+            document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            
+            const tool = this.textContent;
+            const message = tool === 'Timeline' ? 'Timeline editing mode' : `${tool} tool activated`;
+            window.videoEditor.showStatus(message, 'info');
+        });
+    });
+
+    // Make sure videoEditor is global
+    if (!window.videoEditor) {
+        window.videoEditor = new VideoEditor();
+    }
+</script>
+{% endblock %}

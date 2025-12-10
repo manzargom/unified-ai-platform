@@ -1,0 +1,33 @@
+C:\Fasttrack\video-editor\
+├── index.html              # Main editor interface
+├── styles.css              # (instead of editor.css)
+├── app.js                  # (instead of editor.js)
+├── timeline.js             # Timeline component
+├── ai-detector.js          # AI editing tools
+├── ffmpeg-worker.js        # FFmpeg.wasm worker
+├── i18n/                   # Bilingual support
+│   ├── en.json
+│   └── es.json
+├── backend/
+│   ├── server.py           # Flask server (port 5050)
+│   ├── ai_agents/
+│   │   ├── captions.py     # Auto-captioning
+│   │   ├── scene_detect.py # Scene detection
+│   │   └── auto_edit.py    # Auto-editing suggestions
+│   └── temp_storage.py     # Temporary file handling
+└── assets/
+    ├── icons/
+    ├── transitions/
+    └── demo_videos/
+
+C:\Fasttrack\video-editor\
+├── index.html              # Main interface (bilingual)
+├── app.js                  # Main app logic
+├── session-manager.js      # Session management
+├── timeline-manager.js     # Timeline operations
+├── styles.css              # Basic styles
+├── i18n/
+│   ├── en.json            # English
+│   └── es.json            # Spanish
+└── backend/
+    └── server.py          # Flask server (port 5050)

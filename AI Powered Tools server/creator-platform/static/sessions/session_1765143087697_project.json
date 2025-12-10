@@ -1,0 +1,26 @@
+{
+  "sessionId": "session_1765143087697",
+  "video": {
+    "cached_path": "/static/cache\\0b960628-ef30-4c2b-b103-3622d7fae126_41b9396c9f3471823a4a538a62e2142f_cached.mp4",
+    "duration": 46.5465,
+    "file_size": 54339558,
+    "original_filename": "244839_medium.mp4",
+    "resolution": "1280x720",
+    "session_id": "0b960628-ef30-4c2b-b103-3622d7fae126",
+    "success": true
+  },
+  "scenes": [],
+  "timeline": {
+    "videoTrack": [
+      {
+        "start": 150.15132,
+        "end": 295.7526,
+        "type": "clip",
+        "name": "Clip 1"
+      }
+    ],
+    "audioTrack": [],
+    "additionalTracks": []
+  },
+  "savedAt": "2025-12-07T21:34:36.548Z"
+}

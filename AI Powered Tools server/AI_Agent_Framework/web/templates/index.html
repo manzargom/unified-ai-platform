@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deepseek AI Assistant</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+<!-- Project selector in sidebar -->
+<div class="project-selector">
+    <h3><i class="fas fa-folder"></i> Projects</h3>
+    <div class="project-list" id="projectList">
+        <!-- Projects will be loaded here -->
+    </div>
+    <button class="new-project-btn" id="newProjectBtn">
+        <i class="fas fa-plus-circle"></i> New Project
+    </button>
+</div>
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-robot"></i>
+                    <h1>Deepseek AI</h1>
+                </div>
+                <button class="new-chat-btn" id="newChatBtn">
+                    <i class="fas fa-plus"></i> New Chat
+                </button>
+            </div>
+
+            <div class="sidebar-content">
+                <!-- Agent Selection -->
+                <div class="agent-selector">
+                    <h3><i class="fas fa-user-cog"></i> Agent Type</h3>
+                    <div class="agent-options">
+                        <div class="agent-option active" data-agent="basic">
+                            <i class="fas fa-comment"></i>
+                            <span>Basic</span>
+                        </div>
+                        <div class="agent-option" data-agent="enhanced">
+                            <i class="fas fa-bolt"></i>
+                            <span>Enhanced</span>
+                        </div>
+                        <div class="agent-option" data-agent="creative">
+                            <i class="fas fa-paint-brush"></i>
+                            <span>Creative</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Model Settings -->
+                <div class="settings">
+                    <h3><i class="fas fa-sliders-h"></i> Settings</h3>
+                    <div class="setting-item">
+                        <label for="temperature">Temperature: <span id="tempValue">0.7</span></label>
+                        <input type="range" id="temperature" min="0.1" max="1.5" step="0.1" value="0.7">
+                    </div>
+                    <div class="setting-item">
+                        <label for="maxTokens">Max Tokens: <span id="tokenValue">2000</span></label>
+                        <input type="range" id="maxTokens" min="500" max="4000" step="100" value="2000">
+                    </div>
+                </div>
+
+                <!-- Chat History -->
+                <div class="chat-history">
+                    <h3><i class="fas fa-history"></i> Recent</h3>
+                    <div id="chatHistory"></div>
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="status" id="connectionStatus">
+                    <i class="fas fa-circle status-dot connected"></i>
+                    <span>Connected</span>
+                </div>
+                <button class="settings-btn" id="settingsBtn">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="chat-header">
+                <div class="header-left">
+                    <h2 id="currentAgent">Basic Agent</h2>
+                    <div class="agent-badge" id="agentBadge">
+                        <i class="fas fa-comment"></i>
+                        <span>Standard Responses</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button class="header-btn" id="clearChatBtn">
+                        <i class="fas fa-trash"></i> Clear
+                    </button>
+                    <button class="header-btn" id="exportChatBtn">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                </div>
+            </header>
+
+            <!-- Chat Messages -->
+            <div class="chat-container" id="chatContainer">
+                <div class="welcome-message" id="welcomeMessage">
+                    <div class="welcome-content">
+                        <div class="welcome-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h2>Welcome to Deepseek AI</h2>
+                        <p>Select an agent type and start chatting. I can help with coding, creative writing, problem-solving, and more.</p>
+                        
+                        <div class="quick-prompts">
+                            <h4>Try asking:</h4>
+                            <div class="prompt-grid">
+                                <div class="prompt-card" data-prompt="Explain quantum computing in simple terms">
+                                    <i class="fas fa-atom"></i>
+                                    <span>Quantum Computing</span>
+                                </div>
+                                <div class="prompt-card" data-prompt="Write a Python function to reverse a string">
+                                    <i class="fas fa-code"></i>
+                                    <span>Python Code</span>
+                                </div>
+                                <div class="prompt-card" data-prompt="Create a character for a fantasy story">
+                                    <i class="fas fa-dragon"></i>
+                                    <span>Character Creation</span>
+                                </div>
+                                <div class="prompt-card" data-prompt="Help me debug this JavaScript code">
+                                    <i class="fas fa-bug"></i>
+                                    <span>Debug Help</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Messages will be appended here -->
+            </div>
+
+            <!-- Input Area -->
+            <div class="input-area">
+                <div class="input-container">
+                    <div class="input-wrapper">
+                        <textarea 
+                            id="messageInput" 
+                            placeholder="Type your message here... (Shift+Enter for new line)"
+                            rows="1"
+                            onkeydown="handleKeyDown(event)"
+                        ></textarea>
+                        <div class="input-actions">
+                            <button class="action-btn" id="sendButton" title="Send (Enter)">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                            <button class="action-btn" id="attachButton" title="Attach File">
+                                <i class="fas fa-paperclip"></i>
+                            </button>
+                            <button class="action-btn" id="micButton" title="Voice Input">
+                                <i class="fas fa-microphone"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="input-footer">
+                        <div class="model-info">
+                            <i class="fas fa-microchip"></i>
+                            <span id="modelInfo">deepseek-coder-6.7b-instruct</span>
+                        </div>
+                        <div class="typing-indicator" id="typingIndicator" style="display: none;">
+                            <div class="typing-dots">
+                                <div class="dot"></div>
+                                <div class="dot"></div>
+                                <div class="dot"></div>
+                            </div>
+                            <span>Thinking...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-cog"></i> Advanced Settings</h3>
+                <button class="modal-close" id="closeSettings">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-section">
+                    <h4>API Configuration</h4>
+                    <div class="form-group">
+                        <label for="apiUrl">API Base URL</label>
+                        <input type="text" id="apiUrl" value="http://localhost:1234/v1">
+                    </div>
+                    <div class="form-group">
+                        <label for="modelSelect">Model</label>
+                        <select id="modelSelect">
+                            <option value="deepseek-coder-6.7b-instruct">Deepseek Coder 6.7B</option>
+                            <option value="deepseek-llm-7b-chat">Deepseek LLM 7B</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="modal-section">
+                    <h4>Response Settings</h4>
+                    <div class="form-group">
+                        <label for="topP">Top P: <span id="topPValue">0.9</span></label>
+                        <input type="range" id="topP" min="0.1" max="1" step="0.1" value="0.9">
+                    </div>
+                    <div class="form-group">
+                        <label for="frequencyPenalty">Frequency Penalty: <span id="freqValue">0.0</span></label>
+                        <input type="range" id="frequencyPenalty" min="0" max="2" step="0.1" value="0.0">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelSettings">Cancel</button>
+                <button class="btn-primary" id="saveSettings">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="exportModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-download"></i> Export Conversation</h3>
+                <button class="modal-close" id="closeExport">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="export-options">
+                    <div class="export-option" data-format="json">
+                        <i class="fas fa-code"></i>
+                        <div>
+                            <h4>JSON</h4>
+                            <p>Structured data with metadata</p>
+                        </div>
+                    </div>
+                    <div class="export-option" data-format="txt">
+                        <i class="fas fa-file-alt"></i>
+                        <div>
+                            <h4>Text</h4>
+                            <p>Plain text conversation</p>
+                        </div>
+                    </div>
+                    <div class="export-option" data-format="markdown">
+                        <i class="fas fa-markdown"></i>
+                        <div>
+                            <h4>Markdown</h4>
+                            <p>Formatted with markdown</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelExport">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p>Initializing AI Agent...</p>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="/static/js/minimal.js"></script>
+</body>
+</html>

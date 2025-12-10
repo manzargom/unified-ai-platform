@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🎬 Video Editor</title>
+    <style>
+        :root {
+            --primary: #ff5e00;
+            --secondary: #00b4d8;
+            --dark: #0a0a0f;
+            --medium: #141420;
+            --light: #1e1e2e;
+        }
+        
+        body {
+            margin: 0;
+            padding: 20px;
+            background: var(--dark);
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: var(--medium);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid var(--primary);
+            text-align: center;
+        }
+        
+        h1 {
+            color: var(--primary);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .upload-area {
+            border: 3px dashed var(--secondary);
+            padding: 50px;
+            text-align: center;
+            border-radius: 10px;
+            margin: 20px 0;
+            cursor: pointer;
+            background: rgba(0, 180, 216, 0.05);
+            transition: all 0.3s;
+        }
+        
+        .upload-area:hover {
+            background: rgba(0, 180, 216, 0.1);
+            border-color: var(--primary);
+        }
+        
+        .upload-area i {
+            font-size: 64px;
+            color: var(--secondary);
+            margin-bottom: 20px;
+        }
+        
+        video {
+            width: 100%;
+            max-height: 500px;
+            background: black;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .controls {
+            background: var(--medium);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            border: 1px solid rgba(255, 94, 0, 0.3);
+        }
+        
+        button {
+            background: var(--light);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+            min-width: 140px;
+            justify-content: center;
+        }
+        
+        button:hover:not(:disabled) {
+            background: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .ai-btn {
+            background: #9b59b6;
+            border-color: #9b59b6;
+        }
+        
+        .ai-btn:hover:not(:disabled) {
+            background: #8e44ad;
+        }
+        
+        .status {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .scene {
+            background: rgba(155, 89, 182, 0.1);
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 6px;
+            border-left: 3px solid #9b59b6;
+        }
+        
+        .time-display {
+            font-family: monospace;
+            font-size: 18px;
+            margin: 10px 0;
+            text-align: center;
+        }
+        
+        .file-info {
+            background: var(--medium);
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-size: 14px;
+            color: #aaa;
+        }
+        
+        .supported-formats {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .format-badge {
+            background: rgba(255, 94, 0, 0.1);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: 1px solid rgba(255, 94, 0, 0.3);
+        }
+        
+        .mkv-badge {
+            background: rgba(46, 204, 113, 0.1);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            color: #2ecc71;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-film"></i> Video Editor</h1>
+            <p>Upload, edit, and save your videos - No login required</p>
+        </header>
+        
+        <!-- Upload Area -->
+        <div class="upload-area" id="uploadArea" onclick="uploadVideo()">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <h2>Click to Upload Video</h2>
+            <p>Drag & drop or click to browse</p>
+            
+            <div class="supported-formats">
+                <span class="format-badge">MP4</span>
+                <span class="format-badge">WebM</span>
+                <span class="format-badge mkv-badge">MKV</span>
+                <span class="format-badge">MOV</span>
+                <span class="format-badge">AVI</span>
+                <span class="format-badge">WMV</span>
+                <span class="format-badge">FLV</span>
+            </div>
+            
+            <input type="file" id="fileInput" accept="video/*,.mkv,.mp4,.webm,.mov,.avi,.wmv,.flv" style="display: none;">
+        </div>
+        
+        <!-- Video Player -->
+        <div id="videoContainer" style="display: none;">
+            <video id="videoPlayer" controls>
+                <!-- Fallback message for unsupported formats -->
+                <p>Your browser doesn't support this video format. Try converting to MP4.</p>
+            </video>
+            
+            <div class="time-display">
+                <span id="currentTime">00:00</span> / <span id="totalTime">00:00</span>
+            </div>
+            
+            <div class="file-info" id="fileInfo">
+                <!-- File info will appear here -->
+            </div>
+            
+            <!-- Simple Controls -->
+            <div class="controls">
+                <button onclick="playPause()" id="playPauseBtn">
+                    <i class="fas fa-play"></i> Play
+                </button>
+                <button onclick="restartVideo()">
+                    <i class="fas fa-redo"></i> Restart
+                </button>
+                <button onclick="muteToggle()" id="muteBtn">
+                    <i class="fas fa-volume-up"></i> Mute
+                </button>
+                <button onclick="fullscreenToggle()">
+                    <i class="fas fa-expand"></i> Fullscreen
+                </button>
+                <button class="ai-btn" onclick="detectScenes()" id="aiBtn">
+                    <i class="fas fa-robot"></i> Detect Scenes
+                </button>
+                <button onclick="saveProject()" id="saveBtn">
+                    <i class="fas fa-save"></i> Save Project
+                </button>
+            </div>
+        </div>
+        
+        <!-- Status -->
+        <div class="status" id="status">
+            <span id="statusText">Ready - Upload a video to start</span>
+        </div>
+        
+        <!-- AI Results -->
+        <div id="aiResults" style="display: none;">
+            <h3 style="text-align: center; color: #9b59b6;">
+                <i class="fas fa-robot"></i> Detected Scenes
+            </h3>
+            <div id="scenesList"></div>
+        </div>
+        
+        <!-- Format Help -->
+        <div class="status" id="formatHelp" style="display: none; border-left-color: #f39c12;">
+            <h3><i class="fas fa-info-circle"></i> MKV Format Note</h3>
+            <p>MKV files work, but may have limited browser support. If playback fails:</p>
+            <ul style="text-align: left; margin: 10px 0; padding-left: 20px;">
+                <li>Try converting to MP4 using tools like HandBrake or FFmpeg</li>
+                <li>Or try a different browser (Chrome has best MKV support)</li>
+                <li>Make sure video codec is H.264 for best compatibility</li>
+            </ul>
+        </div>
+        
+        <!-- Results -->
+        <div id="results"></div>
+    </div>
+
+    <script>
+        // State
+        let currentVideo = null;
+        let isPlaying = false;
+        let isMuted = false;
+        let detectedScenes = [];
+        
+        // DOM Elements
+        const videoPlayer = document.getElementById('videoPlayer');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const muteBtn = document.getElementById('muteBtn');
+        const aiBtn = document.getElementById('aiBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        const formatHelp = document.getElementById('formatHelp');
+        
+        // Initialize
+        function init() {
+            // Setup event listeners
+            videoPlayer.addEventListener('timeupdate', updateTimeDisplay);
+            videoPlayer.addEventListener('loadedmetadata', updateDuration);
+            videoPlayer.addEventListener('play', () => {
+                isPlaying = true;
+                updatePlayPauseButton();
+            });
+            videoPlayer.addEventListener('pause', () => {
+                isPlaying = false;
+                updatePlayPauseButton();
+            });
+            
+            // Error handling for unsupported formats
+            videoPlayer.addEventListener('error', handleVideoError);
+            
+            // Test server connection
+            testServerConnection();
+        }
+        
+        // Handle video errors (e.g., unsupported MKV codec)
+        function handleVideoError(e) {
+            console.error('Video error:', videoPlayer.error);
+            
+            if (currentVideo && currentVideo.name.toLowerCase().endsWith('.mkv')) {
+                formatHelp.style.display = 'block';
+                setStatus('⚠️ MKV playback issue - try converting to MP4 for better compatibility', 'warning');
+            } else {
+                setStatus('❌ Video playback error. Try a different format or browser.', 'error');
+            }
+        }
+        
+        // Test server
+        async function testServerConnection() {
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                setStatus(`✅ Connected to server on port ${data.port}`);
+            } catch (error) {
+                setStatus('⚠️ Server not responding - some features disabled', 'warning');
+                aiBtn.disabled = true;
+                saveBtn.disabled = true;
+            }
+        }
+        
+        // Upload video
+        function uploadVideo() {
+            document.getElementById('fileInput').click();
+        }
+        
+        document.getElementById('fileInput').onchange = function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            // Check if it's a video file (by extension and MIME type)
+            const videoExtensions = ['.mp4', '.mkv', '.webm', '.mov', '.avi', '.wmv', '.flv', '.m4v', '.mpg', '.mpeg'];
+            const fileName = file.name.toLowerCase();
+            const isVideoFile = videoExtensions.some(ext => fileName.endsWith(ext)) || 
+                               file.type.startsWith('video/');
+            
+            if (!isVideoFile) {
+                setStatus('Please select a video file (MP4, MKV, WebM, MOV, AVI, etc.)', 'error');
+                return;
+            }
+            
+            const url = URL.createObjectURL(file);
+            const container = document.getElementById('videoContainer');
+            const uploadArea = document.getElementById('uploadArea');
+            
+            // Reset any previous errors
+            formatHelp.style.display = 'none';
+            
+            // Setup video
+            videoPlayer.src = url;
+            videoPlayer.load();
+            
+            // Show UI
+            container.style.display = 'block';
+            uploadArea.style.display = 'none';
+            
+            // Store video data
+            currentVideo = {
+                file: file,
+                url: url,
+                name: file.name,
+                size: file.size,
+                type: file.type,
+                extension: fileName.split('.').pop().toLowerCase()
+            };
+            
+            // Update file info
+            const fileSizeMB = (file.size / 1024 / 1024).toFixed(1);
+            const fileType = file.type || `Video (.${currentVideo.extension})`;
+            
+            document.getElementById('fileInfo').innerHTML = `
+                <strong>${file.name}</strong><br>
+                Size: ${fileSizeMB} MB | 
+                Type: ${fileType}<br>
+                Format: <span class="${currentVideo.extension === 'mkv' ? 'mkv-badge' : 'format-badge'}" style="font-size: 11px; padding: 2px 6px;">
+                    ${currentVideo.extension.toUpperCase()}
+                </span>
+            `;
+            
+            setStatus(`📹 Video loaded: ${file.name}`, 'success');
+            
+            // Enable buttons
+            aiBtn.disabled = false;
+            saveBtn.disabled = false;
+            
+            // Show format help for MKV
+            if (currentVideo.extension === 'mkv') {
+                setTimeout(() => {
+                    formatHelp.style.display = 'block';
+                }, 1000);
+            }
+        };
+        
+        // Drag & drop
+        const uploadArea = document.getElementById('uploadArea');
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.background = 'rgba(0, 180, 216, 0.1)';
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.background = '';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.background = '';
+            
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                // Check if it's a video file
+                const videoExtensions = ['.mp4', '.mkv', '.webm', '.mov', '.avi', '.wmv', '.flv'];
+                const fileName = file.name.toLowerCase();
+                const isVideoFile = videoExtensions.some(ext => fileName.endsWith(ext)) || 
+                                   file.type.startsWith('video/');
+                
+                if (isVideoFile) {
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    document.getElementById('fileInput').files = dataTransfer.files;
+                    document.getElementById('fileInput').dispatchEvent(new Event('change'));
+                } else {
+                    setStatus('Please drop a video file (MP4, MKV, WebM, etc.)', 'error');
+                }
+            }
+        });
+        
+        // Video controls
+        function playPause() {
+            if (!currentVideo) return;
+            
+            if (videoPlayer.paused) {
+                videoPlayer.play();
+            } else {
+                videoPlayer.pause();
+            }
+            updatePlayPauseButton();
+        }
+        
+        function updatePlayPauseButton() {
+            const icon = videoPlayer.paused ? 'fa-play' : 'fa-pause';
+            const text = videoPlayer.paused ? 'Play' : 'Pause';
+            playPauseBtn.innerHTML = `<i class="fas ${icon}"></i> ${text}`;
+        }
+        
+        function restartVideo() {
+            if (!currentVideo) return;
+            
+            videoPlayer.currentTime = 0;
+            videoPlayer.play();
+            setStatus('🔄 Video restarted');
+        }
+        
+        function muteToggle() {
+            if (!currentVideo) return;
+            
+            isMuted = !isMuted;
+            videoPlayer.muted = isMuted;
+            
+            const icon = isMuted ? 'fa-volume-mute' : 'fa-volume-up';
+            const text = isMuted ? 'Unmute' : 'Mute';
+            muteBtn.innerHTML = `<i class="fas ${icon}"></i> ${text}`;
+            
+            setStatus(isMuted ? '🔇 Muted' : '🔊 Unmuted');
+        }
+        
+        function fullscreenToggle() {
+            if (!currentVideo) return;
+            
+            if (!document.fullscreenElement) {
+                videoPlayer.requestFullscreen().catch(err => {
+                    setStatus('Fullscreen failed: ' + err.message, 'error');
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+        
+        // Time display
+        function updateTimeDisplay() {
+            const current = document.getElementById('currentTime');
+            const total = document.getElementById('totalTime');
+            
+            current.textContent = formatTime(videoPlayer.currentTime);
+            total.textContent = formatTime(videoPlayer.duration);
+        }
+        
+        function updateDuration() {
+            if (currentVideo) {
+                currentVideo.duration = videoPlayer.duration;
+                setStatus(`Duration: ${formatTime(videoPlayer.duration)}`);
+            }
+        }
+        
+        // AI Scene Detection
+        async function detectScenes() {
+            if (!currentVideo) {
+                setStatus('Please upload a video first', 'error');
+                return;
+            }
+            
+            setStatus('🤖 AI is detecting scenes...');
+            aiBtn.disabled = true;
+            
+            try {
+                const response = await fetch('/api/detect-scenes', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        duration: videoPlayer.duration || 30,
+                        filename: currentVideo.name,
+                        format: currentVideo.extension
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    detectedScenes = data.scenes;
+                    displayScenes(data.scenes);
+                    setStatus(`✅ Found ${data.count} scenes!`, 'success');
+                } else {
+                    setStatus('Scene detection failed', 'error');
+                }
+            } catch (error) {
+                setStatus('Server error: ' + error.message, 'error');
+            } finally {
+                aiBtn.disabled = false;
+            }
+        }
+        
+        // Display scenes
+        function displayScenes(scenes) {
+            const container = document.getElementById('aiResults');
+            const list = document.getElementById('scenesList');
+            
+            list.innerHTML = scenes.map(scene => `
+                <div class="scene">
+                    <strong>${scene.id}</strong><br>
+                    ${formatTime(scene.start)} → ${formatTime(scene.end)} (${scene.duration}s)<br>
+                    <small>Confidence: ${(scene.confidence * 100).toFixed(0)}%</small>
+                </div>
+            `).join('');
+            
+            container.style.display = 'block';
+        }
+        
+        // Save project
+        async function saveProject() {
+            if (!currentVideo) {
+                setStatus('No video to save', 'error');
+                return;
+            }
+            
+            setStatus('💾 Saving project...');
+            saveBtn.disabled = true;
+            
+            const projectData = {
+                id: 'project_' + Date.now(),
+                name: currentVideo.name,
+                created: new Date().toISOString(),
+                video: {
+                    name: currentVideo.name,
+                    size: currentVideo.size,
+                    duration: videoPlayer.duration || 0,
+                    format: currentVideo.extension
+                },
+                scenes: detectedScenes,
+                session: window.location.search
+            };
+            
+            try {
+                const response = await fetch('/api/project/save', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(projectData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    setStatus(`✅ Project saved! ID: ${data.project_id}`, 'success');
+                    
+                    // Create shareable link
+                    const shareUrl = window.location.origin + window.location.pathname + '?session=' + data.project_id;
+                    
+                    // Show success message
+                    const resultDiv = document.createElement('div');
+                    resultDiv.className = 'status';
+                    resultDiv.style.borderLeftColor = '#2ecc71';
+                    resultDiv.innerHTML = `
+                        <h3>✅ Project Saved!</h3>
+                        <p><strong>ID:</strong> ${data.project_id}</p>
+                        <p><strong>Name:</strong> ${currentVideo.name}</p>
+                        <p><strong>Format:</strong> ${currentVideo.extension.toUpperCase()}</p>
+                        <p><strong>Scenes:</strong> ${detectedScenes.length}</p>
+                        <p><strong>Share URL:</strong></p>
+                        <input type="text" value="${shareUrl}" style="width:100%; padding:8px; margin:5px 0; background:var(--light); color:white; border:1px solid var(--primary); border-radius:4px;" readonly>
+                        <button onclick="copyToClipboard('${shareUrl}')" style="margin-top:10px;">
+                            <i class="fas fa-copy"></i> Copy Link
+                        </button>
+                    `;
+                    document.getElementById('results').prepend(resultDiv);
+                    
+                } else {
+                    setStatus('Save failed: ' + data.error, 'error');
+                }
+            } catch (error) {
+                setStatus('Save error: ' + error.message, 'error');
+            } finally {
+                saveBtn.disabled = false;
+            }
+        }
+        
+        // Copy to clipboard
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                setStatus('✅ Link copied to clipboard');
+            });
+        }
+        
+        // Utility functions
+        function formatTime(seconds) {
+            if (!seconds || isNaN(seconds)) return '00:00';
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+        
+        function setStatus(message, type = 'info') {
+            const el = document.getElementById('statusText');
+            el.textContent = message;
+            
+            const statusEl = document.getElementById('status');
+            const colors = {
+                'error': '#e74c3c',
+                'success': '#2ecc71',
+                'warning': '#f39c12',
+                'info': '#00b4d8'
+            };
+            statusEl.style.borderLeftColor = colors[type] || colors.info;
+            
+            console.log('Status:', message);
+        }
+        
+        // Browser compatibility check
+        function checkBrowserCompatibility() {
+            const video = document.createElement('video');
+            const canPlayMKV = video.canPlayType('video/x-matroska') !== '';
+            
+            if (!canPlayMKV) {
+                console.log('Browser may have limited MKV support');
+            }
+        }
+        
+        // Initialize on load
+        window.addEventListener('load', () => {
+            init();
+            checkBrowserCompatibility();
+        });
+    </script>
+</body>
+</html>

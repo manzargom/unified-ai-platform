@@ -1,0 +1,77 @@
+{
+  "app": {
+    "title": "AI Video Editor",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "error": "Error",
+    "success": "Success"
+  },
+  "editor": {
+    "title": "Video Editor",
+    "upload_video": "Upload Video",
+    "upload_audio": "Upload Audio",
+    "export": "Export Video",
+    "play": "Play",
+    "pause": "Pause",
+    "stop": "Stop",
+    "cut": "Cut",
+    "trim": "Trim",
+    "split": "Split",
+    "delete": "Delete",
+    "undo": "Undo",
+    "redo": "Redo",
+    "scene_detection": "Scene Detection",
+    "auto_cut": "Auto Cut",
+    "detect_scenes": "Detect Scenes",
+    "add_transition": "Add Transition",
+    "add_text": "Add Text",
+    "add_effect": "Add Effect",
+    "settings": "Settings"
+  },
+  "timeline": {
+    "video_tracks": "Video Tracks",
+    "audio_tracks": "Audio Tracks",
+    "add_video_track": "Add Video Track",
+    "add_audio_track": "Add Audio Track",
+    "remove_track": "Remove Track",
+    "track": "Track",
+    "time": "Time",
+    "duration": "Duration",
+    "position": "Position",
+    "zoom_in": "Zoom In",
+    "zoom_out": "Zoom Out"
+  },
+  "transitions": {
+    "title": "Transitions",
+    "fade": "Fade",
+    "crossfade": "Crossfade",
+    "wipe": "Wipe",
+    "slide": "Slide",
+    "zoom": "Zoom",
+    "spin": "Spin",
+    "glitch": "Glitch",
+    "duration": "Duration (seconds)",
+    "apply": "Apply Transition"
+  },
+  "ai": {
+    "scene_detection": "AI Scene Detection",
+    "detecting": "Detecting scenes...",
+    "scenes_found": "Scenes found",
+    "auto_cut_scenes": "Auto-cut at scenes",
+    "suggest_transitions": "Suggest transitions",
+    "analyzing": "Analyzing video..."
+  },
+  "export": {
+    "title": "Export Settings",
+    "format": "Format",
+    "quality": "Quality",
+    "resolution": "Resolution",
+    "fps": "FPS",
+    "bitrate": "Bitrate",
+    "start_export": "Start Export",
+    "exporting": "Exporting...",
+    "complete": "Export complete!"
+  }
+}

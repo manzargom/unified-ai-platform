@@ -1,0 +1,77 @@
+{
+  "app": {
+    "title": "Editor de Video con IA",
+    "loading": "Cargando...",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "close": "Cerrar",
+    "error": "Error",
+    "success": "Éxito"
+  },
+  "editor": {
+    "title": "Editor de Video",
+    "upload_video": "Subir Video",
+    "upload_audio": "Subir Audio",
+    "export": "Exportar Video",
+    "play": "Reproducir",
+    "pause": "Pausar",
+    "stop": "Detener",
+    "cut": "Cortar",
+    "trim": "Recortar",
+    "split": "Dividir",
+    "delete": "Eliminar",
+    "undo": "Deshacer",
+    "redo": "Rehacer",
+    "scene_detection": "Detección de Escenas",
+    "auto_cut": "Corte Automático",
+    "detect_scenes": "Detectar Escenas",
+    "add_transition": "Añadir Transición",
+    "add_text": "Añadir Texto",
+    "add_effect": "Añadir Efecto",
+    "settings": "Configuración"
+  },
+  "timeline": {
+    "video_tracks": "Pistas de Video",
+    "audio_tracks": "Pistas de Audio",
+    "add_video_track": "Añadir Pista de Video",
+    "add_audio_track": "Añadir Pista de Audio",
+    "remove_track": "Eliminar Pista",
+    "track": "Pista",
+    "time": "Tiempo",
+    "duration": "Duración",
+    "position": "Posición",
+    "zoom_in": "Acercar",
+    "zoom_out": "Alejar"
+  },
+  "transitions": {
+    "title": "Transiciones",
+    "fade": "Fundido",
+    "crossfade": "Fundido Cruzado",
+    "wipe": "Barrido",
+    "slide": "Deslizamiento",
+    "zoom": "Zoom",
+    "spin": "Giro",
+    "glitch": "Glitch",
+    "duration": "Duración (segundos)",
+    "apply": "Aplicar Transición"
+  },
+  "ai": {
+    "scene_detection": "Detección de Escenas con IA",
+    "detecting": "Detectando escenas...",
+    "scenes_found": "Escenas encontradas",
+    "auto_cut_scenes": "Cortar automáticamente en escenas",
+    "suggest_transitions": "Sugerir transiciones",
+    "analyzing": "Analizando video..."
+  },
+  "export": {
+    "title": "Configuración de Exportación",
+    "format": "Formato",
+    "quality": "Calidad",
+    "resolution": "Resolución",
+    "fps": "FPS",
+    "bitrate": "Bitrate",
+    "start_export": "Iniciar Exportación",
+    "exporting": "Exportando...",
+    "complete": "¡Exportación completa!"
+  }
+}
