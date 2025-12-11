@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 Creator's Playground</title>
+    <link rel="stylesheet" href="/static/css/landing.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎮</text></svg>">
+</head>
+<body>
+    <div class="animated-bg"></div>
+    <div class="particles-container" id="particles"></div>
+    
+    <div class="landing-container">
+        <header class="landing-header">
+            <div class="logo">
+                <i class="fas fa-gamepad"></i>
+                <h1>Creator's Playground</h1>
+            </div>
+            <p class="tagline">Your ultimate visual novel creation studio</p>
+        </header>
+
+        <section class="hero-section">
+            <div class="hero-content">
+                <h2>Create Amazing Visual Novels</h2>
+                <p class="hero-description">
+                    A complete suite of professional tools for storytelling, character design, 
+                    scene writing, and code development.
+                </p>
+                
+                <div class="tools-grid">
+                    <div class="tool-card" id="creatorToolCard">
+                        <div class="tool-icon">
+                            <i class="fas fa-hat-wizard"></i>
+                        </div>
+                        <div class="tool-content">
+                            <h3>Creator's Tool</h3>
+                            <p class="tool-description">
+                                Professional visual novel creation studio with project management, 
+                                character design, scene writing, and asset management.
+                            </p>
+                            <ul class="tool-features">
+                                <li><i class="fas fa-check"></i> Project Management</li>
+                                <li><i class="fas fa-check"></i> Character Designer</li>
+                                <li><i class="fas fa-check"></i> Scene Writer</li>
+                                <li><i class="fas fa-check"></i> Asset Browser</li>
+                                <li><i class="fas fa-check"></i> Ren'Py Export</li>
+                            </ul>
+                        </div>
+                        <button class="launch-btn" onclick="window.location.href='/creator'">
+                            <i class="fas fa-rocket"></i> Launch Creator's Tool
+                        </button>
+                    </div>
+
+                    <div class="tool-card" id="codeAssistantCard">
+                        <div class="tool-icon">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <div class="tool-content">
+                            <h3>Code Assistant</h3>
+                            <p class="tool-description">
+                                Advanced coding assistance for Ren'Py scripting, Python development, 
+                                and technical implementation.
+                            </p>
+                            <ul class="tool-features">
+                                <li><i class="fas fa-check"></i> Ren'Py Scripting</li>
+                                <li><i class="fas fa-check"></i> Python Development</li>
+                                <li><i class="fas fa-check"></i> AI Integration</li>
+                                <li><i class="fas fa-check"></i> Code Debugging</li>
+                                <li><i class="fas fa-check"></i> Technical Support</li>
+                            </ul>
+                        </div>
+                        <button class="launch-btn" onclick="window.location.href='/code'">
+                            <i class="fas fa-terminal"></i> Launch Code Assistant
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <i class="fas fa-folder"></i>
+                        <div class="stat-content">
+                            <span class="stat-number" id="projectCount">0</span>
+                            <span class="stat-label">Projects Created</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-users"></i>
+                        <div class="stat-content">
+                            <span class="stat-number" id="characterCount">0</span>
+                            <span class="stat-label">Characters Designed</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-scroll"></i>
+                        <div class="stat-content">
+                            <span class="stat-number" id="sceneCount">0</span>
+                            <span class="stat-label">Scenes Written</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-bolt"></i>
+                        <div class="stat-content">
+                            <span class="stat-number">24/7</span>
+                            <span class="stat-label">AI Assistance</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="landing-footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Creator's Playground</h4>
+                    <p>Professional tools for visual novel creators.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <a href="/creator" class="footer-link"><i class="fas fa-arrow-right"></i> Creator's Tool</a>
+                    <a href="/code" class="footer-link"><i class="fas fa-arrow-right"></i> Code Assistant</a>
+                    <a href="/api/health" class="footer-link"><i class="fas fa-arrow-right"></i> System Status</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Technologies</h4>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Python</span>
+                        <span class="tech-tag">Flask</span>
+                        <span class="tech-tag">Ren'Py</span>
+                        <span class="tech-tag">AI</span>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2024 Creator's Playground. All tools are ready to use!</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="/static/js/landing.js"></script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+
+    <!-- Bootstrap 5.3 Dark Theme -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+
+</head>
+  <style>
+  .footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+  }
+  a { text-decoration: none; }
+  h2 { text-warning: none; }
+  </style>
+  <body background="../static/img/carbon.jpg">
+
+    <nav class="navbar navbar-fixed bg-body-secondary">
+      <div class="container-fluid">
+      <a class="navbar-brand" href="../sites/dummy_media_platform.html"><h2>Creator's Tools</h2></a>
+
+
+
+
+
+
+
+
+
+I'm a flexbox container!</div>
+</nav>
+
+       <footer class="footer mt-auto py-3">
+           <div class="container text-center">
+              <span class="text-light">
+                 Creator's Playground &copy;2025 Designed by JD Mojica Powered by <a class="text-warning" href="https://chat.deepseek.com/">Deepseek AI</a>
+               </span>
+           </div>
+       </footer>
+
+    <script async src="https://cdn.jsdelivr.net/npm/es-module-shims@1/dist/es-module-shims.min.js" crossorigin="anonymous"></script>
+       <script type="importmap">
+       {
+         "imports": {
+           "@popperjs/core": "https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/esm/popper.min.js",
+           "bootstrap": "https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.esm.min.js"
+         }
+       }
+       </script>
+       <script type="module">
+         import * as bootstrap from 'bootstrap'
+
+         new bootstrap.Popover(document.getElementById('popoverButton'))
+       </script
+       const myCarouselElement = document.querySelector('#myCarousel')
+
+       const carousel = new bootstrap.Carousel(myCarouselElement, {
+         interval: 2000,
+         touch: false
+       })
+  </body>
+</html>

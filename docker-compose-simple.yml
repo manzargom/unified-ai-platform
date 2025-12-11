@@ -3,22 +3,24 @@ services:
   redis:
     image: redis:7-alpine
     restart: unless-stopped
-    volumes:
-      - redis_data:/data
+
+  celery-worker:
+    build: ./backend
+    command: celery -A app.celery worker --loglevel=info
+    restart: unless-stopped
+    depends_on:
+      - redis
+    environment:
+      - REDIS_URL=redis://redis:6379/0
 
   flask-app:
     build: ./backend
     ports:
       - "5000:5000"
     restart: unless-stopped
-    volumes:
-      - ./backend:/app
-      - ./backend/static:/app/static
     depends_on:
       - redis
+      - celery-worker
     environment:
       - REDIS_URL=redis://redis:6379/0
       - FLASK_ENV=production
-
-volumes:
-  redis_data:
