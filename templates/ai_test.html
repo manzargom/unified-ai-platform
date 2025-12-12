@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🤖 AI Playground - Creator's Playground</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+            min-height: 100vh;
+        }
+        .ai-header {
+            background: rgba(139, 92, 246, 0.2);
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 3px solid #8B5CF6;
+        }
+        .ai-container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        .ai-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+        .ai-btn {
+            background: linear-gradient(135deg, #8B5CF6, #6366F1);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.2s;
+        }
+        .ai-btn:hover {
+            transform: translateY(-2px);
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            background: rgba(26, 26, 46, 0.8);
+            color: white;
+            border: 2px solid #8B5CF6;
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 16px;
+            margin: 20px 0;
+            resize: vertical;
+        }
+        .ai-output {
+            background: rgba(16, 185, 129, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 25px;
+            border: 1px solid #10B981;
+            white-space: pre-wrap;
+            min-height: 100px;
+        }
+        .model-selector {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .model-btn {
+            background: #374151;
+            border: 2px solid #4B5563;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        .model-btn.active {
+            background: #8B5CF6;
+            border-color: #8B5CF6;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: #8B5CF6;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(16, 185, 129, 0.2);
+            color: #10B981;
+            border-radius: 20px;
+            margin: 10px 0;
+            border: 1px solid #10B981;
+        }
+    </style>
+</head>
+<body>
+    <div class="ai-header">
+        <h1>🤖 AI Playground</h1>
+        <p>Powered by Local Ollama AI Models</p>
+        <div id="status" class="status-badge">Checking AI status...</div>
+    </div>
+    
+    <div class="ai-container">
+        <h2>Available AI Models</h2>
+        <div class="model-selector" id="model-selector">
+            <!-- Models will load here -->
+        </div>
+        
+        <h2>Ask Your AI</h2>
+        <textarea id="question" placeholder="Type your question here... 
+Example: 'Write a short story about space exploration'
+Or: 'Explain quantum computing simply'
+Or: 'Help me debug Python code'"></textarea>
+        
+        <div class="ai-controls">
+            <button class="ai-btn" onclick="quickPrompt('story')">
+                📖 Story Idea
+            </button>
+            <button class="ai-btn" onclick="quickPrompt('code')">
+                💻 Code Help
+            </button>
+            <button class="ai-btn" onclick="quickPrompt('explain')">
+                📚 Explain
+            </button>
+            <button class="ai-btn" onclick="quickPrompt('creative')">
+                🎨 Creative
+            </button>
+        </div>
+        
+        <button class="ai-btn" onclick="askAI()" style="width: 100%; padding: 18px; font-size: 18px;">
+            🤖 Ask AI
+        </button>
+        
+        <div id="response" class="ai-output">
+            <!-- AI response appears here -->
+        </div>
+        
+        <a href="/" class="back-link">← Back to Creator's Playground</a>
+    </div>
+
+    <script>
+        let currentModel = 'mistral';
+        
+        // Check AI status on load
+        function checkAIStatus() {
+            fetch('http://localhost:11434/api/tags')
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error('Ollama not responding');
+                })
+                .then(data => {
+                    const models = data.models || [];
+                    const statusDiv = document.getElementById('status');
+                    const modelSelector = document.getElementById('model-selector');
+                    
+                    statusDiv.innerHTML = `✅ AI Online - ${models.length} models available`;
+                    statusDiv.style.background = 'rgba(16, 185, 129, 0.2)';
+                    statusDiv.style.borderColor = '#10B981';
+                    statusDiv.style.color = '#10B981';
+                    
+                    // Load model buttons
+                    modelSelector.innerHTML = '';
+                    models.forEach(model => {
+                        const btn = document.createElement('button');
+                        btn.className = `model-btn ${model.name === 'mistral' ? 'active' : ''}`;
+                        btn.textContent = model.name;
+                        btn.onclick = () => {
+                            document.querySelectorAll('.model-btn').forEach(b => b.classList.remove('active'));
+                            btn.classList.add('active');
+                            currentModel = model.name;
+                        };
+                        modelSelector.appendChild(btn);
+                    });
+                })
+                .catch(error => {
+                    document.getElementById('status').innerHTML = '❌ AI Offline - Start Ollama with: ollama serve';
+                    document.getElementById('status').style.background = 'rgba(239, 68, 68, 0.2)';
+                    document.getElementById('status').style.borderColor = '#EF4444';
+                    document.getElementById('status').style.color = '#EF4444';
+                });
+        }
+        
+        // Ask AI
+        function askAI() {
+            const question = document.getElementById('question').value;
+            const responseDiv = document.getElementById('response');
+            
+            if (!question.trim()) {
+                responseDiv.innerHTML = 'Please enter a question first!';
+                responseDiv.style.background = 'rgba(239, 68, 68, 0.1)';
+                responseDiv.style.borderColor = '#EF4444';
+                return;
+            }
+            
+            responseDiv.innerHTML = '<div style="text-align: center;"><i>Thinking... This may take 10-30 seconds</i></div>';
+            responseDiv.style.background = 'rgba(245, 158, 11, 0.1)';
+            responseDiv.style.borderColor = '#F59E0B';
+            
+            fetch('http://localhost:11434/api/generate', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    model: currentModel,
+                    prompt: question,
+                    stream: false
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`AI error: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                responseDiv.innerHTML = `
+                    <div style="color: #10B981; margin-bottom: 15px;">
+                        <strong>✅ ${currentModel} responded:</strong>
+                    </div>
+                    <div style="font-size: 16px; line-height: 1.6;">
+                        ${data.response.replace(/\n/g, '<br>')}
+                    </div>
+                `;
+                responseDiv.style.background = 'rgba(16, 185, 129, 0.1)';
+                responseDiv.style.borderColor = '#10B981';
+            })
+            .catch(error => {
+                responseDiv.innerHTML = `
+                    <div style="color: #EF4444;">
+                        <strong>❌ Error:</strong> ${error.message}
+                    </div>
+                    <p>Make sure Ollama is running:</p>
+                    <code style="background: #2d2d44; padding: 8px 12px; border-radius: 5px; display: inline-block; margin-top: 10px;">
+                    ollama serve
+                    </code>
+                `;
+                responseDiv.style.background = 'rgba(239, 68, 68, 0.1)';
+                responseDiv.style.borderColor = '#EF4444';
+            });
+        }
+        
+        // Quick prompts
+        function quickPrompt(type) {
+            const prompts = {
+                'story': 'Write a creative short story (under 200 words) about a time-traveling photographer.',
+                'code': 'Write Python code to download a YouTube video and extract its audio. Include error handling.',
+                'explain': 'Explain how neural networks work in simple terms that a beginner can understand.',
+                'creative': 'Generate 5 creative video ideas for a science education YouTube channel.'
+            };
+            
+            document.getElementById('question').value = prompts[type];
+        }
+        
+        // Initialize
+        checkAIStatus();
+        setInterval(checkAIStatus, 30000); // Refresh every 30 seconds
+    </script>
+</body>
+</html>

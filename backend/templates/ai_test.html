@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Test - Creator's Playground</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 40px; 
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        .ai-box {
+            background: rgba(139, 92, 246, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        textarea {
+            width: 100%;
+            height: 120px;
+            background: rgba(26, 26, 46, 0.8);
+            color: white;
+            border: 2px solid #8B5CF6;
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 16px;
+            resize: vertical;
+        }
+        button {
+            background: linear-gradient(135deg, #8B5CF6, #6366F1);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px 0;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        .response {
+            background: rgba(16, 185, 129, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 1px solid #10B981;
+            white-space: pre-wrap;
+        }
+        .status {
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            display: inline-block;
+        }
+        .online {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10B981;
+            border: 1px solid #10B981;
+        }
+        .offline {
+            background: rgba(239, 68, 68, 0.2);
+            color: #EF4444;
+            border: 1px solid #EF4444;
+        }
+        h1 {
+            color: #8B5CF6;
+            text-align: center;
+        }
+        .back-link {
+            color: #8B5CF6;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 AI Test Page</h1>
+        <p>This page connects directly to your local Ollama AI.</p>
+        
+        <div class="ai-box">
+            <h3>AI Status</h3>
+            <div id="status" class="status offline">Checking...</div>
+            <div id="models"></div>
+        </div>
+        
+        <div class="ai-box">
+            <h3>Ask Your AI</h3>
+            <p>Type any question and your local AI will answer:</p>
+            
+            <textarea id="question" placeholder="Example: Write a short story about a robot learning to paint...
+Or: Explain quantum computing in simple terms...
+Or: What are good video ideas for a tech channel?"></textarea>
+            
+            <br>
+            <button onclick="askAI()">🤖 Ask AI</button>
+            <button onclick="clearText()" style="background: #6B7280;">🗑️ Clear</button>
+            
+            <div id="response" class="response">
+                <!-- AI response will appear here -->
+            </div>
+        </div>
+        
+        <div class="ai-box">
+            <h3>Quick Examples</h3>
+            <button onclick="setExample('story')" style="background: #F59E0B;">📖 Story Idea</button>
+            <button onclick="setExample('code')" style="background: #3B82F6;">💻 Code Help</button>
+            <button onclick="setExample('video')" style="background: #EF4444;">🎬 Video Idea</button>
+            <button onclick="setExample('explain')" style="background: #10B981;">📚 Explain Concept</button>
+        </div>
+        
+        <a href="/" class="back-link">← Back to Creator's Playground</a>
+    </div>
+
+    <script>
+        // Check AI status on page load
+        function checkAIStatus() {
+            fetch('http://localhost:11434/api/tags')
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error('Ollama not responding');
+                })
+                .then(data => {
+                    const models = data.models || [];
+                    const statusDiv = document.getElementById('status');
+                    const modelsDiv = document.getElementById('models');
+                    
+                    statusDiv.className = 'status online';
+                    statusDiv.innerHTML = `<i class="fas fa-circle"></i> ✅ AI Online - ${models.length} models available`;
+                    
+                    if (models.length > 0) {
+                        modelsDiv.innerHTML = '<strong>Available Models:</strong><br>' + 
+                            models.map(m => 
+                                `<div style="background: rgba(139, 92, 246, 0.2); padding: 5px 10px; margin: 5px 0; border-radius: 5px; display: inline-block; margin-right: 10px;">
+                                 ${m.name}
+                                 </div>`
+                            ).join('');
+                    } else {
+                        modelsDiv.innerHTML = 'No models loaded. Run: ollama pull mistral';
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('status').className = 'status offline';
+                    document.getElementById('status').innerHTML = 
+                        `<i class="fas fa-circle"></i> ❌ AI Offline - ${error.message}`;
+                    document.getElementById('models').innerHTML = 
+                        '<p>💡 To start AI, open a terminal and run:</p>' +
+                        '<code style="background: #2d2d44; padding: 5px 10px; border-radius: 5px; display: block; margin: 10px 0;">' +
+                        'ollama serve<br>' +
+                        'ollama pull mistral' +
+                        '</code>';
+                });
+        }
+        
+        // Ask AI a question
+        function askAI() {
+            const question = document.getElementById('question').value;
+            const responseDiv = document.getElementById('response');
+            
+            if (!question.trim()) {
+                responseDiv.innerHTML = 'Please enter a question first!';
+                responseDiv.style.background = 'rgba(239, 68, 68, 0.1)';
+                responseDiv.style.borderColor = '#EF4444';
+                return;
+            }
+            
+            responseDiv.innerHTML = '<div style="text-align: center;"><i class="fas fa-spinner fa-spin"></i> Thinking... This may take 10-30 seconds</div>';
+            responseDiv.style.background = 'rgba(245, 158, 11, 0.1)';
+            responseDiv.style.borderColor = '#F59E0B';
+            
+            fetch('http://localhost:11434/api/generate', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    model: 'mistral',
+                    prompt: question,
+                    stream: false
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`AI error: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                responseDiv.innerHTML = `
+                    <div style="color: #10B981; margin-bottom: 15px;">
+                        <strong>✅ AI Response (Mistral):</strong>
+                    </div>
+                    <div style="font-size: 16px; line-height: 1.6;">
+                        ${data.response.replace(/\n/g, '<br>')}
+                    </div>
+                `;
+                responseDiv.style.background = 'rgba(16, 185, 129, 0.1)';
+                responseDiv.style.borderColor = '#10B981';
+            })
+            .catch(error => {
+                responseDiv.innerHTML = `
+                    <div style="color: #EF4444;">
+                        <strong>❌ Error:</strong> ${error.message}
+                    </div>
+                    <p>Make sure Ollama is running:</p>
+                    <code style="background: #2d2d44; padding: 5px 10px; border-radius: 5px; display: block;">
+                    ollama serve
+                    </code>
+                `;
+                responseDiv.style.background = 'rgba(239, 68, 68, 0.1)';
+                responseDiv.style.borderColor = '#EF4444';
+            });
+        }
+        
+        // Set example questions
+        function setExample(type) {
+            const examples = {
+                'story': 'Write a short creative story about a time-traveling photographer in 200 words or less.',
+                'code': 'Write Python code to download a YouTube video and extract audio from it.',
+                'video': 'Give me 5 creative video ideas for a science education YouTube channel.',
+                'explain': 'Explain how neural networks work in simple terms that a beginner can understand.'
+            };
+            
+            document.getElementById('question').value = examples[type];
+        }
+        
+        // Clear text
+        function clearText() {
+            document.getElementById('question').value = '';
+            document.getElementById('response').innerHTML = '';
+        }
+        
+        // Check AI status when page loads
+        checkAIStatus();
+        
+        // Auto-check every 30 seconds
+        setInterval(checkAIStatus, 30000);
+    </script>
+    
+    <!-- Add Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</body>
+</html>
